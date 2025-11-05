@@ -54,7 +54,7 @@ function Dashboard() {
           Dashboard
         </h1>
         <p className="text-gray-600">
-          Gestor de contenidos de Water Wise Services
+          Bienvenido al sistema de gestión de contenidos de Water Wise Solutions
         </p>
       </div>
 
