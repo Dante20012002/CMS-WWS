@@ -3,7 +3,7 @@ import { useSubproductos } from '../hooks/useProducts';
 import SubProductForm from './SubProductForm';
 
 function SubProductList({ productoDocId }) {
-  const { subproductos, loading, deleteSubproducto } = useSubproductos(productoDocId);
+  const { subproductos, loading, deleteSubproducto, loadSubproductos } = useSubproductos(productoDocId);
   const [showForm, setShowForm] = useState(false);
   const [editingSubproducto, setEditingSubproducto] = useState(null);
   const [deleting, setDeleting] = useState(null);
@@ -30,9 +30,13 @@ function SubProductList({ productoDocId }) {
     }
   };
 
-  const handleCloseForm = () => {
+  const handleCloseForm = async () => {
     setShowForm(false);
     setEditingSubproducto(null);
+    // Recargar subproductos después de cerrar el formulario
+    if (productoDocId) {
+      await loadSubproductos();
+    }
   };
 
   if (loading) {

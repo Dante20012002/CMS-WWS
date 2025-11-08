@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSubproductos } from '../hooks/useProducts';
+import Marcadores3DEditor from './Marcadores3DEditor';
 
 function SubProductForm({ productoDocId, subproducto, onClose }) {
   const { createSubproducto, updateSubproducto } = useSubproductos(productoDocId);
@@ -56,8 +57,19 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
 
   // Ya no necesitamos handleImageUpload - usamos campos de texto
 
+  const handleMarcadoresChange = (marcadores) => {
+    setFormData(prev => ({
+      ...prev,
+      marcadores3d: marcadores
+    }));
+  };
+
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    // Prevenir el comportamiento por defecto si viene de un evento
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation(); // Importante: detener propagación
+    }
 
     if (!formData.nombre.trim()) {
       alert('El nombre es requerido');
@@ -86,7 +98,14 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
         marca: formData.marca || null
       };
 
-      if (subproducto) {
+      console.log('Guardando subproducto:', {
+        isEdit: !!subproducto,
+        docId: subproducto?.docId,
+        productoDocId,
+        dataToSave
+      });
+
+      if (subproducto && subproducto.docId) {
         await updateSubproducto(subproducto.docId, dataToSave);
         alert('SubProducto actualizado exitosamente');
       } else {
@@ -94,10 +113,18 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
         alert('SubProducto creado exitosamente');
       }
 
+      // Esperar un momento para que Firestore se actualice
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       onClose();
     } catch (error) {
       console.error('Error al guardar subproducto:', error);
-      alert('Error al guardar el subproducto');
+      console.error('Detalles del error:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      alert(`Error al guardar el subproducto: ${error.message || 'Error desconocido'}`);
     } finally {
       setLoading(false);
     }
@@ -119,7 +146,7 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-4">
         {/* Información Básica */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -242,6 +269,19 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
                 className="input-field"
                 placeholder="/models/subproducto.glb"
               />
+              
+              {/* Editor de Marcadores 3D - Solo si hay modelo3d */}
+              {formData.modelo3d && (
+                <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  <Marcadores3DEditor
+                    marcadores={formData.marcadores3d || []}
+                    onChange={handleMarcadoresChange}
+                  />
+                  <p className="mt-2 text-xs text-gray-500">
+                    💡 Los marcadores 3D definen puntos interactivos en el modelo. Cada marcador tiene coordenadas (X, Y, Z) y labels (nombres de accesorios).
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
@@ -301,14 +341,15 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
             Cancelar
           </button>
           <button
-            type="submit"
+            type="button"
+            onClick={handleSubmit}
             className="btn-primary"
             disabled={loading}
           >
             {loading ? 'Guardando...' : subproducto ? 'Actualizar' : 'Crear'}
           </button>
         </div>
-      </form>
+      </div>
     </div>
   );
 }

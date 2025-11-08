@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import SubProductList from './SubProductList';
+import Marcadores3DEditor from './Marcadores3DEditor';
 
 const CATEGORIAS = [
   'CONTROL DE CAUDAL',
@@ -94,6 +95,13 @@ function ProductForm() {
   };
 
   // Ya no necesitamos handleImageUpload - usamos campos de texto
+
+  const handleMarcadoresChange = (marcadores) => {
+    setFormData(prev => ({
+      ...prev,
+      marcadores3d: marcadores
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -338,6 +346,19 @@ function ProductForm() {
               <p className="mt-1 text-xs text-gray-500">
                 Opcional. Ruta al archivo .glb del modelo 3D
               </p>
+              
+              {/* Editor de Marcadores 3D - Solo si hay modelo3d */}
+              {formData.modelo3d && (
+                <div className="mt-4 p-4 border border-gray-300 rounded-lg bg-gray-50">
+                  <Marcadores3DEditor
+                    marcadores={formData.marcadores3d || []}
+                    onChange={handleMarcadoresChange}
+                  />
+                  <p className="mt-2 text-xs text-gray-500">
+                    💡 Los marcadores 3D definen puntos interactivos en el modelo. Cada marcador tiene coordenadas (X, Y, Z) y labels (nombres de accesorios).
+                  </p>
+                </div>
+              )}
             </div>
 
             <div>
