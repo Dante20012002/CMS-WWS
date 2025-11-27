@@ -49,6 +49,7 @@ El CMS gestiona **solo datos textuales** en Firestore. Las imágenes y modelos 3
    - Imágenes: `/public_html/assets/Productos/`
    - Modelos 3D: `/public_html/models/`
    - QRs: `/public_html/assets/QR/`
+   - PDFs: `/public_html/assets/PDF/` (crea esta carpeta si no existe)
 
 3. **Sube tus archivos:**
    ```
@@ -56,8 +57,10 @@ El CMS gestiona **solo datos textuales** en Firestore. Las imágenes y modelos 3
    ├── assets/
    │   ├── Productos/
    │   │   └── mi-producto.jpg        ← Sube aquí
-   │   └── QR/
-   │       └── mi-producto-qr.png     ← Sube aquí
+   │   ├── QR/
+   │   │   └── mi-producto-qr.png     ← Sube aquí
+   │   └── PDF/
+   │       └── mi-producto.pdf         ← Sube aquí
    └── models/
        └── mi-producto.glb             ← Sube aquí
    ```
@@ -66,6 +69,7 @@ El CMS gestiona **solo datos textuales** en Firestore. Las imágenes y modelos 3
    ```
    Imagen: /assets/Productos/mi-producto.jpg
    QR:     /assets/QR/mi-producto-qr.png
+   PDF:    /assets/PDF/mi-producto.pdf
    Modelo: /models/mi-producto.glb
    ```
 
@@ -91,7 +95,7 @@ El CMS gestiona **solo datos textuales** en Firestore. Las imágenes y modelos 3
    **Multimedia:**
    - 📷 Ruta de Imagen Principal: `/assets/Productos/mi-producto.jpg`
    - 🎮 Ruta de Modelo 3D: `/models/mi-producto.glb`
-   - 📄 URL de PDF: `https://drive.google.com/uc?export=download&id=...`
+   - 📄 Ruta de PDF: `/assets/PDF/mi-producto.pdf`
    - 📱 Ruta de QR: `/assets/QR/mi-producto-qr.png`
    - 📋 URL de Formulario: `https://forms.office.com/...`
 
@@ -155,6 +159,7 @@ El CMS gestiona **solo datos textuales** en Firestore. Las imágenes y modelos 3
    - `/public_html/assets/Productos/`
    - `/public_html/models/`
    - `/public_html/assets/QR/`
+   - `/public_html/assets/PDF/`
 3. **Elimina los archivos** del producto si ya no los necesitas
 
 ---
@@ -184,9 +189,12 @@ El workflow es exactamente el mismo, pero:
 │   │   ├── 1.jpg           ← Por ID de producto
 │   │   ├── 2.jpg
 │   │   └── compuerta-mural.jpg  ← O por nombre
-│   └── QR/
-│       ├── 1-qr.png
-│       └── compuerta-mural-qr.png
+│   ├── QR/
+│   │   ├── 1-qr.png
+│   │   └── compuerta-mural-qr.png
+│   └── PDF/
+│       ├── 1.pdf
+│       └── compuerta-mural.pdf
 └── models/
     ├── 1-modelo.glb
     └── compuerta-mural.glb
@@ -265,7 +273,7 @@ Si actualizas una imagen pero la landing muestra la vieja:
 | **Imágenes** | `/public_html/assets/Productos/` | `/assets/Productos/producto.jpg` |
 | **QR Codes** | `/public_html/assets/QR/` | `/assets/QR/producto-qr.png` |
 | **Modelos 3D** | `/public_html/models/` | `/models/producto.glb` |
-| **PDFs** | Google Drive | `https://drive.google.com/...` |
+| **PDFs** | `/public_html/assets/PDF/` | `/assets/PDF/producto.pdf` |
 | **Formularios** | Microsoft Forms | `https://forms.office.com/...` |
 
 ---

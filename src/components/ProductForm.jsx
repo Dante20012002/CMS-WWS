@@ -1,25 +1,17 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
+import { useCategorias } from '../hooks/useCategorias';
 import SubProductList from './SubProductList';
 import Marcadores3DEditor from './Marcadores3DEditor';
-
-const CATEGORIAS = [
-  'CONTROL DE CAUDAL',
-  'DRAGADO Y PRETRATAMIENTO',
-  'AGITACIÓN Y FLOCULACIÓN',
-  'TRATAMIENTO SECUNDARIO',
-  'SEDIMENTACIÓN',
-  'TRATAMIENTO TERCIARIO',
-  'TRATAMIENTO DE LODOS Y TRANSPORTADORES',
-  'ADECUACIONES ESTRUCTURALES E HIDRÁULICAS',
-  'SERVICIOS'
-];
+import ImagePathInput from './ImagePathInput';
+import { getAbsoluteUrl } from '../config/site';
 
 function ProductForm() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { getProducto, createProducto, updateProducto } = useProducts();
+  const { categorias, loading: loadingCategorias } = useCategorias();
   
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(!!id);
@@ -30,7 +22,7 @@ function ProductForm() {
     imagen: '',
     imagenes: [],
     slug: '',
-    categoria: CATEGORIAS[0],
+    categoria: '',
     modelo3d: '',
     marcadores3d: [],
     pdf: '',
@@ -38,6 +30,16 @@ function ProductForm() {
     formUrl: '',
     marca: ''
   });
+
+  // Establecer categoría por defecto cuando se carguen las categorías (solo si no hay producto cargado)
+  useEffect(() => {
+    if (categorias.length > 0 && !formData.categoria && !loadingData) {
+      setFormData(prev => ({
+        ...prev,
+        categoria: categorias[0].nombre
+      }));
+    }
+  }, [categorias, loadingData]);
 
   // Cargar producto si estamos editando
   useEffect(() => {
@@ -57,7 +59,7 @@ function ProductForm() {
         imagen: producto.imagen || '',
         imagenes: producto.imagenes || [],
         slug: producto.slug || '',
-        categoria: producto.categoria || CATEGORIAS[0],
+        categoria: producto.categoria || (categorias.length > 0 ? categorias[0].nombre : ''),
         modelo3d: producto.modelo3d || '',
         marcadores3d: producto.marcadores3d || [],
         pdf: producto.pdf || '',
@@ -244,11 +246,23 @@ function ProductForm() {
                 onChange={handleChange}
                 className="input-field"
                 required
+                disabled={loadingCategorias || categorias.length === 0}
               >
-                {CATEGORIAS.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
+                {loadingCategorias ? (
+                  <option>Cargando categorías...</option>
+                ) : categorias.length === 0 ? (
+                  <option>No hay categorías disponibles</option>
+                ) : (
+                  categorias.map(cat => (
+                    <option key={cat.docId} value={cat.nombre}>{cat.nombre}</option>
+                  ))
+                )}
               </select>
+              {categorias.length === 0 && !loadingCategorias && (
+                <p className="mt-1 text-xs text-yellow-600">
+                  ⚠️ No hay categorías disponibles. Ve a "Categorías" para crear una.
+                </p>
+              )}
             </div>
 
             <div>
@@ -295,41 +309,22 @@ function ProductForm() {
               💡 <strong>Instrucciones:</strong> Primero sube los archivos a cPanel (File Manager o FTP), luego ingresa las rutas aquí.
             </p>
             <p className="text-xs text-blue-600 mt-2">
-              Ejemplo: <code className="bg-blue-100 px-1 rounded">/assets/Productos/imagen.jpg</code>
+              Ejemplos: 
+              <code className="bg-blue-100 px-1 rounded ml-1">/assets/Productos/imagen.jpg</code>
+              <code className="bg-blue-100 px-1 rounded ml-1">/assets/PDF/producto.pdf</code>
+              <code className="bg-blue-100 px-1 rounded ml-1">/models/producto.glb</code>
             </p>
           </div>
 
           <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ruta de Imagen Principal
-              </label>
-              <input
-                type="text"
-                name="imagen"
-                value={formData.imagen}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="/assets/Productos/imagen.jpg"
-              />
-              {formData.imagen && (
-                <div className="mt-3">
-                  <p className="text-xs text-gray-500 mb-2">Preview:</p>
-                  <img
-                    src={formData.imagen}
-                    alt="Preview"
-                    className="max-w-xs rounded-lg border border-gray-300"
-                    onError={(e) => {
-                      e.target.style.display = 'none';
-                      e.target.nextSibling.style.display = 'block';
-                    }}
-                  />
-                  <div style={{ display: 'none' }} className="text-xs text-red-500 mt-2">
-                    ⚠️ No se pudo cargar la imagen. Verifica la ruta.
-                  </div>
-                </div>
-              )}
-            </div>
+            <ImagePathInput
+              label="Ruta de Imagen Principal"
+              name="imagen"
+              value={formData.imagen}
+              onChange={handleChange}
+              placeholder="/assets/Productos/imagen.jpg"
+              helpText="Ruta del archivo en cPanel (ej: /assets/Productos/imagen.jpg)"
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -363,7 +358,7 @@ function ProductForm() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL de PDF
+                Ruta de PDF
               </label>
               <input
                 type="text"
@@ -371,37 +366,33 @@ function ProductForm() {
                 value={formData.pdf}
                 onChange={handleChange}
                 className="input-field"
-                placeholder="https://drive.google.com/uc?export=download&id=..."
+                placeholder="/assets/PDF/producto.pdf"
               />
               <p className="mt-1 text-xs text-gray-500">
-                Opcional. URL completa del PDF (puede ser Google Drive)
+                Opcional. Ruta del archivo PDF en cPanel (ej: /assets/PDF/producto.pdf)
               </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Ruta de Imagen QR
-              </label>
-              <input
-                type="text"
-                name="qr"
-                value={formData.qr}
-                onChange={handleChange}
-                className="input-field"
-                placeholder="/assets/QR/producto-qr.png"
-              />
-              {formData.qr && (
-                <div className="mt-3">
-                  <p className="text-xs text-gray-500 mb-2">Preview QR:</p>
-                  <img
-                    src={formData.qr}
-                    alt="QR Preview"
-                    className="max-w-[150px] rounded-lg border border-gray-300"
-                    onError={(e) => e.target.style.display = 'none'}
-                  />
+              {formData.pdf && formData.pdf.startsWith('/') && (
+                <div className="mt-2">
+                  <a
+                    href={formData.pdf}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary-600 hover:text-primary-700 underline"
+                  >
+                    🔗 Ver PDF
+                  </a>
                 </div>
               )}
             </div>
+
+            <ImagePathInput
+              label="Ruta de Imagen QR"
+              name="qr"
+              value={formData.qr}
+              onChange={handleChange}
+              placeholder="/assets/QR/producto-qr.png"
+              helpText="Ruta del archivo QR en cPanel (ej: /assets/QR/producto-qr.png)"
+            />
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">

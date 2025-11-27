@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSubproductos } from '../hooks/useProducts';
 import SubProductForm from './SubProductForm';
+import { getAbsoluteUrl } from '../config/site';
 
 function SubProductList({ productoDocId }) {
   const { subproductos, loading, deleteSubproducto, loadSubproductos } = useSubproductos(productoDocId);
@@ -86,9 +87,10 @@ function SubProductList({ productoDocId }) {
                     {/* Imagen */}
                     {subproducto.imagen && (
                       <img
-                        src={subproducto.imagen}
+                        src={getAbsoluteUrl(subproducto.imagen)}
                         alt={subproducto.nombre}
                         className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                        onError={(e) => e.target.style.display = 'none'}
                       />
                     )}
 

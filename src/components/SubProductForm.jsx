@@ -228,7 +228,11 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
           
           <div className="mb-3 p-3 bg-blue-50 border border-blue-200 rounded text-xs">
             <p className="text-blue-800">
-              💡 Sube primero los archivos a cPanel, luego ingresa las rutas aquí
+              💡 Sube primero los archivos a cPanel (File Manager o FTP), luego ingresa las rutas aquí.
+            </p>
+            <p className="text-blue-600 mt-1">
+              Ejemplos: <code className="bg-blue-100 px-1 rounded">/assets/Productos/imagen.jpg</code>
+              <code className="bg-blue-100 px-1 rounded ml-1">/assets/PDF/subproducto.pdf</code>
             </p>
           </div>
 
@@ -287,7 +291,7 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  URL PDF
+                  Ruta PDF
                 </label>
                 <input
                   type="text"
@@ -295,8 +299,20 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
                   value={formData.pdf}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="https://drive.google.com/..."
+                  placeholder="/assets/PDF/subproducto.pdf"
                 />
+                {formData.pdf && formData.pdf.startsWith('/') && (
+                  <div className="mt-1">
+                    <a
+                      href={formData.pdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-primary-600 hover:text-primary-700 underline"
+                    >
+                      🔗 Ver PDF
+                    </a>
+                  </div>
+                )}
               </div>
 
               <div>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { useState } from 'react';
+import { getAbsoluteUrl } from '../config/site';
 
 function ProductList() {
   const { productos, loading, deleteProducto } = useProducts();
@@ -121,9 +122,12 @@ function ProductList() {
               {/* Imagen */}
               {producto.imagen && (
                 <img
-                  src={producto.imagen}
+                  src={getAbsoluteUrl(producto.imagen)}
                   alt={producto.nombre}
                   className="w-full h-48 object-cover rounded-lg mb-4"
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
                 />
               )}
 

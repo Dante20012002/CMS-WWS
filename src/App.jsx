@@ -7,6 +7,11 @@ import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import ProductList from './components/ProductList';
 import ProductForm from './components/ProductForm';
+import NoticiaList from './components/NoticiaList';
+import NoticiaForm from './components/NoticiaForm';
+import EmpresaEditor from './components/EmpresaEditor';
+import AliadosList from './components/AliadosList';
+import CategoriasList from './components/CategoriasList';
 import UserManagement from './components/UserManagement';
 
 function App() {
@@ -42,6 +47,12 @@ function App() {
           <Route path="/productos" element={<ProductList />} />
           <Route path="/productos/nuevo" element={<ProductForm />} />
           <Route path="/productos/editar/:id" element={<ProductForm />} />
+          <Route path="/noticias" element={<NoticiaList />} />
+          <Route path="/noticias/nuevo" element={<NoticiaForm />} />
+          <Route path="/noticias/editar/:id" element={<NoticiaForm />} />
+          <Route path="/empresa" element={<EmpresaEditor />} />
+          <Route path="/aliados" element={<AliadosList />} />
+          <Route path="/categorias" element={<CategoriasList />} />
           <Route path="/usuarios" element={<UserManagement />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

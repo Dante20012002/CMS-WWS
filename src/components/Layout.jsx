@@ -51,6 +51,46 @@ function Layout({ user, children }) {
                   Productos
                 </Link>
                 <Link
+                  to="/noticias"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/noticias')
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Noticias
+                </Link>
+                <Link
+                  to="/empresa"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/empresa')
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Empresa
+                </Link>
+                <Link
+                  to="/aliados"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/aliados')
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Aliados
+                </Link>
+                <Link
+                  to="/categorias"
+                  className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                    isActive('/categorias')
+                      ? 'bg-primary-100 text-primary-700'
+                      : 'text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  Categorías
+                </Link>
+                <Link
                   to="/usuarios"
                   className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${
                     isActive('/usuarios')
