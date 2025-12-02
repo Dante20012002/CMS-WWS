@@ -12,6 +12,8 @@ import NoticiaForm from './components/NoticiaForm';
 import EmpresaEditor from './components/EmpresaEditor';
 import AliadosList from './components/AliadosList';
 import CategoriasList from './components/CategoriasList';
+import ProyectoList from './components/ProyectoList';
+import ProyectoForm from './components/ProyectoForm';
 import UserManagement from './components/UserManagement';
 
 function App() {
@@ -53,6 +55,9 @@ function App() {
           <Route path="/empresa" element={<EmpresaEditor />} />
           <Route path="/aliados" element={<AliadosList />} />
           <Route path="/categorias" element={<CategoriasList />} />
+          <Route path="/proyectos" element={<ProyectoList />} />
+          <Route path="/proyectos/nuevo" element={<ProyectoForm />} />
+          <Route path="/proyectos/editar/:id" element={<ProyectoForm />} />
           <Route path="/usuarios" element={<UserManagement />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

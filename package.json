@@ -11,7 +11,8 @@
     "migrate:noticias": "node scripts/migrate-noticias.js",
     "migrate:empresa": "node scripts/migrate-empresa.js",
     "migrate:aliados": "node scripts/migrate-aliados.js",
-    "migrate:categorias": "node scripts/migrate-categorias.js"
+    "migrate:categorias": "node scripts/migrate-categorias.js",
+    "migrate:proyectos": "node scripts/migrate-proyectos.js"
   },
   "dependencies": {
     "dotenv": "^16.6.1",
