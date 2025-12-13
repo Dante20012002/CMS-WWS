@@ -44,7 +44,15 @@ function ImagePathInput({
   };
 
   const handleChange = (e) => {
-    onChange(e);
+    try {
+      const newValue = e.target.value;
+      // Siempre pasar el valor directamente, no el evento
+      if (typeof onChange === 'function') {
+        onChange(newValue);
+      }
+    } catch (error) {
+      console.error('Error en handleChange de ImagePathInput:', error);
+    }
   };
 
   return (

@@ -17,6 +17,7 @@ function ProyectoForm() {
   
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(!!id);
+  const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
     nombre: '',
     descripcion: '',
@@ -49,6 +50,7 @@ function ProyectoForm() {
   const loadProyecto = async () => {
     try {
       setLoadingData(true);
+      setError(null);
       const proyecto = await getProyecto(id);
       setFormData({
         nombre: proyecto.nombre || '',
@@ -73,95 +75,154 @@ function ProyectoForm() {
       });
     } catch (error) {
       console.error('Error al cargar proyecto:', error);
-      alert('Error al cargar el proyecto');
-      navigate('/proyectos');
+      setError('Error al cargar el proyecto. Por favor, intenta de nuevo.');
+      setTimeout(() => {
+        navigate('/proyectos');
+      }, 3000);
     } finally {
       setLoadingData(false);
     }
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    try {
+      const { name, value } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    } catch (error) {
+      console.error('Error al actualizar campo:', error);
+    }
   };
 
   const handleUbicacionChange = (field, value) => {
-    setFormData(prev => ({
-      ...prev,
-      ubicacion: {
-        ...prev.ubicacion,
-        [field]: field === 'lat' || field === 'lng' ? parseFloat(value) || 0 : value
+    try {
+      let processedValue = value;
+      
+      // Si es un campo numérico, validar y convertir
+      if (field === 'lat' || field === 'lng') {
+        // Remover espacios y caracteres no numéricos excepto el signo negativo y el punto decimal
+        const cleanedValue = String(value).trim().replace(/[^\d.-]/g, '');
+        const numValue = parseFloat(cleanedValue);
+        
+        // Si no es un número válido, usar 0
+        processedValue = isNaN(numValue) ? 0 : numValue;
       }
-    }));
+      
+      setFormData(prev => ({
+        ...prev,
+        ubicacion: {
+          ...prev.ubicacion,
+          [field]: processedValue
+        }
+      }));
+    } catch (error) {
+      console.error('Error al actualizar ubicación:', error);
+      // En caso de error, mantener el valor anterior
+    }
   };
 
   // Manejar imágenes 30 proyectos
   const handleAddImagen30 = () => {
-    setFormData(prev => ({
-      ...prev,
-      imagen30proyectos: [...prev.imagen30proyectos, '']
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        imagen30proyectos: [...prev.imagen30proyectos, '']
+      }));
+    } catch (error) {
+      console.error('Error al agregar imagen 30:', error);
+    }
   };
 
   const handleUpdateImagen30 = (index, value) => {
-    setFormData(prev => ({
-      ...prev,
-      imagen30proyectos: prev.imagen30proyectos.map((img, i) => i === index ? value : img)
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        imagen30proyectos: prev.imagen30proyectos.map((img, i) => i === index ? value : img)
+      }));
+    } catch (error) {
+      console.error('Error al actualizar imagen 30:', error);
+    }
   };
 
   const handleRemoveImagen30 = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      imagen30proyectos: prev.imagen30proyectos.filter((_, i) => i !== index)
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        imagen30proyectos: prev.imagen30proyectos.filter((_, i) => i !== index)
+      }));
+    } catch (error) {
+      console.error('Error al eliminar imagen 30:', error);
+    }
   };
 
   // Manejar imágenes equipos
   const handleAddImagenEquipo = () => {
-    setFormData(prev => ({
-      ...prev,
-      imagenesEquipos: [...prev.imagenesEquipos, '']
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        imagenesEquipos: [...prev.imagenesEquipos, '']
+      }));
+    } catch (error) {
+      console.error('Error al agregar imagen equipo:', error);
+    }
   };
 
   const handleUpdateImagenEquipo = (index, value) => {
-    setFormData(prev => ({
-      ...prev,
-      imagenesEquipos: prev.imagenesEquipos.map((img, i) => i === index ? value : img)
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        imagenesEquipos: prev.imagenesEquipos.map((img, i) => i === index ? value : img)
+      }));
+    } catch (error) {
+      console.error('Error al actualizar imagen equipo:', error);
+    }
   };
 
   const handleRemoveImagenEquipo = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      imagenesEquipos: prev.imagenesEquipos.filter((_, i) => i !== index)
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        imagenesEquipos: prev.imagenesEquipos.filter((_, i) => i !== index)
+      }));
+    } catch (error) {
+      console.error('Error al eliminar imagen equipo:', error);
+    }
   };
 
   // Manejar equipos
   const handleAddEquipo = () => {
-    setFormData(prev => ({
-      ...prev,
-      equipos: [...prev.equipos, '']
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        equipos: [...prev.equipos, '']
+      }));
+    } catch (error) {
+      console.error('Error al agregar equipo:', error);
+    }
   };
 
   const handleUpdateEquipo = (index, value) => {
-    setFormData(prev => ({
-      ...prev,
-      equipos: prev.equipos.map((eq, i) => i === index ? value : eq)
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        equipos: prev.equipos.map((eq, i) => i === index ? value : eq)
+      }));
+    } catch (error) {
+      console.error('Error al actualizar equipo:', error);
+    }
   };
 
   const handleRemoveEquipo = (index) => {
-    setFormData(prev => ({
-      ...prev,
-      equipos: prev.equipos.filter((_, i) => i !== index)
-    }));
+    try {
+      setFormData(prev => ({
+        ...prev,
+        equipos: prev.equipos.filter((_, i) => i !== index)
+      }));
+    } catch (error) {
+      console.error('Error al eliminar equipo:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -239,6 +300,22 @@ function ProyectoForm() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="card">
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+          <p className="text-red-800">{error}</p>
+          <button
+            onClick={() => navigate('/proyectos')}
+            className="mt-4 btn-secondary"
+          >
+            Volver a Proyectos
+          </button>
+        </div>
       </div>
     );
   }
@@ -404,8 +481,13 @@ function ProyectoForm() {
                 <input
                   type="number"
                   step="0.0001"
-                  value={formData.ubicacion.lat}
+                  value={formData.ubicacion.lat || ''}
                   onChange={(e) => handleUbicacionChange('lat', e.target.value)}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    const pastedText = e.clipboardData.getData('text');
+                    handleUbicacionChange('lat', pastedText);
+                  }}
                   className="input-field"
                   placeholder="Ej: 3.5833"
                   required
@@ -422,8 +504,13 @@ function ProyectoForm() {
                 <input
                   type="number"
                   step="0.0001"
-                  value={formData.ubicacion.lng}
+                  value={formData.ubicacion.lng || ''}
                   onChange={(e) => handleUbicacionChange('lng', e.target.value)}
+                  onPaste={(e) => {
+                    e.preventDefault();
+                    const pastedText = e.clipboardData.getData('text');
+                    handleUbicacionChange('lng', pastedText);
+                  }}
                   className="input-field"
                   placeholder="Ej: -76.5"
                   required

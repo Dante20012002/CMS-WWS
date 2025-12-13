@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useProducts } from '../hooks/useProducts';
 import { useCategorias } from '../hooks/useCategorias';
+import { useAliados } from '../hooks/useAliados';
 import SubProductList from './SubProductList';
 import Marcadores3DEditor from './Marcadores3DEditor';
 import ImagePathInput from './ImagePathInput';
@@ -12,6 +13,7 @@ function ProductForm() {
   const navigate = useNavigate();
   const { getProducto, createProducto, updateProducto } = useProducts();
   const { categorias, loading: loadingCategorias } = useCategorias();
+  const { aliados, loading: loadingAliados } = useAliados();
   
   const [loading, setLoading] = useState(false);
   const [loadingData, setLoadingData] = useState(!!id);
@@ -28,7 +30,8 @@ function ProductForm() {
     pdf: '',
     qr: '',
     formUrl: '',
-    marca: ''
+    marca: '', // Mantener para compatibilidad con datos existentes
+    aliadoId: '' // Nuevo campo: ID del documento del aliado
   });
 
   // Establecer categoría por defecto cuando se carguen las categorías (solo si no hay producto cargado)
@@ -65,7 +68,8 @@ function ProductForm() {
         pdf: producto.pdf || '',
         qr: producto.qr || '',
         formUrl: producto.formUrl || '',
-        marca: producto.marca || ''
+        marca: producto.marca || '', // Mantener para compatibilidad
+        aliadoId: producto.aliadoId || '' // Nuevo campo
       });
     } catch (error) {
       console.error('Error al cargar producto:', error);
@@ -136,7 +140,8 @@ function ProductForm() {
         pdf: formData.pdf || null,
         qr: formData.qr || null,
         formUrl: formData.formUrl || null,
-        marca: formData.marca || null
+        aliadoId: formData.aliadoId && formData.aliadoId.trim() ? formData.aliadoId.trim() : null,
+        marca: formData.marca && formData.marca.trim() ? formData.marca.trim() : null // Mantener para compatibilidad
       };
 
       if (id) {
@@ -284,16 +289,61 @@ function ProductForm() {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Marca
+                Marca / Aliado
               </label>
-              <input
-                type="text"
-                name="marca"
-                value={formData.marca}
-                onChange={handleChange}
+              <select
+                name="aliadoId"
+                value={formData.aliadoId || ''}
+                onChange={(e) => {
+                  const selectedAliadoId = e.target.value;
+                  const selectedAliado = aliados.find(a => a.docId === selectedAliadoId);
+                  setFormData(prev => ({
+                    ...prev,
+                    aliadoId: selectedAliadoId,
+                    marca: selectedAliado ? selectedAliado.nombre : '' // Mantener para compatibilidad
+                  }));
+                }}
                 className="input-field"
-                placeholder="Ej: XS Solutions"
-              />
+              >
+                <option value="">Sin marca / Aliado</option>
+                {loadingAliados ? (
+                  <option disabled>Cargando aliados...</option>
+                ) : (
+                  aliados.map(aliado => (
+                    <option key={aliado.docId} value={aliado.docId}>
+                      {aliado.nombre}
+                    </option>
+                  ))
+                )}
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Selecciona un aliado para asociar este producto. El logo del aliado aparecerá en la página del producto.
+              </p>
+              {formData.aliadoId && (
+                <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                  {(() => {
+                    const selectedAliado = aliados.find(a => a.docId === formData.aliadoId);
+                    return selectedAliado ? (
+                      <>
+                        <p className="text-xs text-blue-800">
+                          ✓ Aliado seleccionado: <strong>{selectedAliado.nombre}</strong>
+                        </p>
+                        {selectedAliado.logo && (
+                          <div className="mt-2 flex items-center gap-2">
+                            <span className="text-xs text-blue-600">Logo del aliado:</span>
+                            <img 
+                              src={getAbsoluteUrl(selectedAliado.logo)} 
+                              alt={selectedAliado.nombre}
+                              className="h-8 object-contain"
+                              onError={(e) => e.target.style.display = 'none'}
+                            />
+                          </div>
+                        )}
+                      </>
+                    ) : null;
+                  })()}
+                </div>
+              )}
             </div>
           </div>
         </div>

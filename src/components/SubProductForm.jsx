@@ -1,9 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useSubproductos } from '../hooks/useProducts';
+import { useAliados } from '../hooks/useAliados';
 import Marcadores3DEditor from './Marcadores3DEditor';
+import ImagePathInput from './ImagePathInput';
+import { getAbsoluteUrl } from '../config/site';
 
 function SubProductForm({ productoDocId, subproducto, onClose }) {
   const { createSubproducto, updateSubproducto } = useSubproductos(productoDocId);
+  const { aliados, loading: loadingAliados } = useAliados();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     nombre: '',
@@ -16,7 +20,8 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
     qr: '',
     pdf: '',
     formUrl: '',
-    marca: ''
+    marca: '', // Mantener para compatibilidad
+    aliadoId: '' // Nuevo campo: ID del documento del aliado
   });
 
   useEffect(() => {
@@ -32,7 +37,8 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
         qr: subproducto.qr || '',
         pdf: subproducto.pdf || '',
         formUrl: subproducto.formUrl || '',
-        marca: subproducto.marca || ''
+        marca: subproducto.marca || '', // Mantener para compatibilidad
+        aliadoId: subproducto.aliadoId || '' // Nuevo campo
       });
     }
   }, [subproducto]);
@@ -95,7 +101,8 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
         qr: formData.qr || null,
         pdf: formData.pdf || null,
         formUrl: formData.formUrl || null,
-        marca: formData.marca || null
+        aliadoId: formData.aliadoId && formData.aliadoId.trim() ? formData.aliadoId.trim() : null,
+        marca: formData.marca && formData.marca.trim() ? formData.marca.trim() : null // Mantener para compatibilidad
       };
 
       console.log('Guardando subproducto:', {
@@ -209,16 +216,61 @@ function SubProductForm({ productoDocId, subproducto, onClose }) {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Marca
+              Marca / Aliado
             </label>
-            <input
-              type="text"
-              name="marca"
-              value={formData.marca}
-              onChange={handleChange}
+            <select
+              name="aliadoId"
+              value={formData.aliadoId || ''}
+              onChange={(e) => {
+                const selectedAliadoId = e.target.value;
+                const selectedAliado = aliados.find(a => a.docId === selectedAliadoId);
+                setFormData(prev => ({
+                  ...prev,
+                  aliadoId: selectedAliadoId,
+                  marca: selectedAliado ? selectedAliado.nombre : '' // Mantener para compatibilidad
+                }));
+              }}
               className="input-field"
-              placeholder="Marca"
-            />
+            >
+              <option value="">Sin marca / Aliado</option>
+              {loadingAliados ? (
+                <option disabled>Cargando aliados...</option>
+              ) : (
+                aliados.map(aliado => (
+                  <option key={aliado.docId} value={aliado.docId}>
+                    {aliado.nombre}
+                  </option>
+                ))
+              )}
+            </select>
+            <p className="mt-1 text-xs text-gray-500">
+              Selecciona un aliado para asociar este subproducto. El logo del aliado aparecerá en la página del subproducto.
+            </p>
+            {formData.aliadoId && (
+              <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-lg">
+                {(() => {
+                  const selectedAliado = aliados.find(a => a.docId === formData.aliadoId);
+                  return selectedAliado ? (
+                    <>
+                      <p className="text-xs text-blue-800">
+                        ✓ Aliado seleccionado: <strong>{selectedAliado.nombre}</strong>
+                      </p>
+                      {selectedAliado.logo && (
+                        <div className="mt-2 flex items-center gap-2">
+                          <span className="text-xs text-blue-600">Logo del aliado:</span>
+                          <img 
+                            src={getAbsoluteUrl(selectedAliado.logo)} 
+                            alt={selectedAliado.nombre}
+                            className="h-8 object-contain"
+                            onError={(e) => e.target.style.display = 'none'}
+                          />
+                        </div>
+                      )}
+                    </>
+                  ) : null;
+                })()}
+              </div>
+            )}
           </div>
         </div>
 
