@@ -148,7 +148,7 @@ function EmpresaEditor() {
                 label="Ruta de Imagen"
                 name="sobreNosotros.imagen"
                 value={formData.sobreNosotros.imagen}
-                onChange={(e) => handleChange('sobreNosotros', 'imagen', e.target.value)}
+                onChange={(value) => handleChange('sobreNosotros', 'imagen', value)}
                 placeholder="/assets/Agua.jpg"
                 helpText="Ruta del archivo en cPanel (ej: /assets/Agua.jpg)"
               />
@@ -267,7 +267,7 @@ function EmpresaEditor() {
                 label="Ruta de Imagen"
                 name="objetivos.imagen"
                 value={formData.objetivos.imagen}
-                onChange={(e) => handleChange('objetivos', 'imagen', e.target.value)}
+                onChange={(value) => handleChange('objetivos', 'imagen', value)}
                 placeholder="/assets/BARRANQUILLA 1.jpg"
                 helpText="Ruta del archivo en cPanel (ej: /assets/BARRANQUILLA 1.jpg)"
               />

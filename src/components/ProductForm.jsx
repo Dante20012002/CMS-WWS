@@ -100,6 +100,21 @@ function ProductForm() {
     }));
   };
 
+  // Handlers específicos para ImagePathInput que reciben el valor directamente
+  const handleImageChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      imagen: value
+    }));
+  };
+
+  const handleQrChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      qr: value
+    }));
+  };
+
   // Ya no necesitamos handleImageUpload - usamos campos de texto
 
   const handleMarcadoresChange = (marcadores) => {
@@ -371,7 +386,7 @@ function ProductForm() {
               label="Ruta de Imagen Principal"
               name="imagen"
               value={formData.imagen}
-              onChange={handleChange}
+              onChange={handleImageChange}
               placeholder="/assets/Productos/imagen.jpg"
               helpText="Ruta del archivo en cPanel (ej: /assets/Productos/imagen.jpg)"
             />
@@ -441,7 +456,7 @@ function ProductForm() {
               label="Ruta de Imagen QR"
               name="qr"
               value={formData.qr}
-              onChange={handleChange}
+              onChange={handleQrChange}
               placeholder="/assets/QR/producto-qr.png"
               helpText="Ruta del archivo QR en cPanel (ej: /assets/QR/producto-qr.png)"
             />

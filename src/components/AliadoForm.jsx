@@ -30,6 +30,14 @@ function AliadoForm({ aliado, onClose }) {
     }));
   };
 
+  // Handler específico para ImagePathInput que recibe el valor directamente
+  const handleLogoChange = (value) => {
+    setFormData(prev => ({
+      ...prev,
+      logo: value
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -123,7 +131,7 @@ function AliadoForm({ aliado, onClose }) {
               label="Ruta del Logo"
               name="logo"
               value={formData.logo}
-              onChange={handleChange}
+              onChange={handleLogoChange}
               placeholder="/assets/Aliados/Equom.png"
               required={true}
               helpText="Ruta del archivo en cPanel (ej: /assets/Aliados/Equom.png)"

@@ -45,7 +45,19 @@ function ImagePathInput({
 
   const handleChange = (e) => {
     try {
-      const newValue = e.target.value;
+      // Manejar tanto eventos como valores directos
+      let newValue;
+      if (e && typeof e === 'object' && e.target && e.target.value !== undefined) {
+        // Es un evento de React
+        newValue = e.target.value;
+      } else if (typeof e === 'string') {
+        // Es un valor directo (ya viene como string)
+        newValue = e;
+      } else {
+        console.warn('ImagePathInput: onChange recibió un valor inesperado:', e);
+        return;
+      }
+      
       // Siempre pasar el valor directamente, no el evento
       if (typeof onChange === 'function') {
         onChange(newValue);
