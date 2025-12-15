@@ -421,10 +421,12 @@ function ProductForm() {
               <p className="mt-1 text-xs text-gray-500">
                 Opcional. Ruta del archivo PDF en cPanel (ej: /assets/PDF/producto.pdf)
               </p>
-              {formData.pdf && formData.pdf.startsWith('/') && (
+              {formData.pdf && (
                 <div className="mt-2">
                   <a
-                    href={formData.pdf}
+                    href={formData.pdf.startsWith('http://') || formData.pdf.startsWith('https://') 
+                      ? formData.pdf 
+                      : getAbsoluteUrl(formData.pdf)}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-primary-600 hover:text-primary-700 underline"
